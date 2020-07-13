@@ -138,10 +138,10 @@ class ResNet(nn.Module):
         return self._forward_impl(x)
 
 
-def _resnet(block, layers, pretrained, pretrained_model_path=None, num_classes=10):
+def _resnet(block, layers, pretrained, pretrained_model_path=None, device="cpu", num_classes=10):
     model = ResNet(block, layers, num_classes)
     if pretrained:
-        pretrained_dict = torch.load(pretrained_model_path)
+        pretrained_dict = torch.load(pretrained_model_path, map_location=device)
         model_dict = model.state_dict()
         pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}  # filter out unnecessary keys
         model_dict.update(pretrained_dict)
@@ -149,17 +149,17 @@ def _resnet(block, layers, pretrained, pretrained_model_path=None, num_classes=1
     return model
 
 
-def resnet18(pretrained=False, pretrained_model_path=None, num_classes=10):
-    return _resnet(BasicBlock, [2, 2, 2, 2], pretrained, pretrained_model_path, num_classes)
+def resnet18(pretrained=False, pretrained_model_path=None, device="cpu", num_classes=10):
+    return _resnet(BasicBlock, [2, 2, 2, 2], pretrained, pretrained_model_path, device, num_classes)
 
 
-def resnet34(pretrained=False, pretrained_model_path=None, num_classes=10):
-    return _resnet(BasicBlock, [3, 4, 6, 3], pretrained, pretrained_model_path, num_classes)
+def resnet34(pretrained=False, pretrained_model_path=None, device="cpu", num_classes=10):
+    return _resnet(BasicBlock, [3, 4, 6, 3], pretrained, pretrained_model_path, device, num_classes)
 
 
-def resnet50(pretrained=False, pretrained_model_path=None, num_classes=10):
-    return _resnet(Bottleneck, [3, 4, 6, 3], pretrained, pretrained_model_path, num_classes)
+def resnet50(pretrained=False, pretrained_model_path=None, device="cpu", num_classes=10):
+    return _resnet(Bottleneck, [3, 4, 6, 3], pretrained, pretrained_model_path, device, num_classes)
 
 
-def resnet101(pretrained=False, pretrained_model_path=None, num_classes=10):
-    return _resnet(Bottleneck, [3, 4, 23, 3], pretrained, pretrained_model_path, num_classes)
+def resnet101(pretrained=False, pretrained_model_path=None, device="cpu", num_classes=10):
+    return _resnet(Bottleneck, [3, 4, 23, 3], pretrained, pretrained_model_path, device, num_classes)
