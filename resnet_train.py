@@ -87,6 +87,7 @@ def test_accuracy(model):
 
 def train():
     model = resnet18().to(device)
+    # print(model.layer1)
     # for name, para in model.named_parameters():
     #     print(name)
     #     print(para.shape)
