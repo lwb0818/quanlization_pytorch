@@ -174,10 +174,7 @@ def model_quantization(model):
     # qconfig = torch.quantization.get_default_qconfig(q_backend)
     # torch.backends.quantized.engine = q_backend
     # model.qconfig = qconfig
-    # model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
-    # torch.backends.quantized.engine = 'fbgemm'
     model.qconfig = torch.quantization.default_qconfig
-    torch.backends.quantized.engine = 'qnnpack'
     print("resnet18_model_fusion.qconfig: \n", model.qconfig)
     torch.quantization.prepare(model, inplace=True)
 
@@ -187,6 +184,7 @@ def model_quantization(model):
 
     model = model.cpu()
     torch.quantization.convert(model, inplace=True)
+    # print(model)
 
 
 if __name__ == '__main__':
@@ -194,8 +192,9 @@ if __name__ == '__main__':
     resnet18_model = resnet18(pretrained=True, pretrained_model_path='./checkpoint/resnet18_weights.pth')
     resnet18_model.eval()
 
-    # top1, top5 = evaluate(resnet18_model, testloader, cpu=True)
-    # print('Evaluation accuracy %2.2f' % top1.avg)
+    start_time = time.time()
+    top1, top5 = evaluate(resnet18_model, testloader, cpu=True)
+    print('Evaluation accuracy %2.2f, time: %f' % (top1.avg, (time.time() - start_time)))
 
     model_quantization(resnet18_model)
 
@@ -208,6 +207,7 @@ if __name__ == '__main__':
         torch.load('./checkpoint/resnet18_quantization_weights.pth', map_location="cpu"))
     resnet_after_quantization = resnet18_model.state_dict()
 
+    start_time = time.time()
     # compute_accuracy(resnet18_model_quantization)
     top1, top5 = evaluate(resnet18_model, testloader, cpu=True)
-    print('Evaluation accuracy %2.2f' % top1.avg)
+    print('Evaluation accuracy %2.2f, time: %f' % (top1.avg, (time.time() - start_time)))
